@@ -104,4 +104,4 @@ The provided Netflix CSV is enriched at build time with IMDB's public datasets (
 
 **Filters:** Movies & Shows · 8+ IMDB · 10 results
 
-![CueFlix demo screenshot]((https://github.com/ia4226/CueFlix/blob/main/demo.png))
+![CueFlix demo screenshot](demo.png)
