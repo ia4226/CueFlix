@@ -100,8 +100,8 @@ The provided Netflix CSV is enriched at build time with IMDB's public datasets (
 
 ## Demo
 
-**Query:** `"something intense like Breaking Bad"`
+**Query:** `"oscar winner"`
 
-**Filters:** Movies & Shows · 8+ IMDB · 5 results
+**Filters:** Movies & Shows · 8+ IMDB · 10 results
 
-![CueFlix demo screenshot](demo.png)
+![CueFlix demo screenshot]([demo.png](https://github.com/ia4226/CueFlix/blob/main/demo.png))
