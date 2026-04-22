@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CueFlix</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f0f0f;
+      color: #f0f0f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -1px;
+    }
+
+    h1 span { color: #e50914; }
+
+    .subtitle {
+      color: #888;
+      font-size: 0.95rem;
+      margin-bottom: 36px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 640px;
+      margin-bottom: 16px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid #2a2a2a;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input[type="text"]:focus { border-color: #555; }
+
+    button {
+      padding: 14px 24px;
+      border-radius: 10px;
+      border: none;
+      background: #e50914;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    button:hover { background: #c40812; }
+    button:disabled { background: #555; cursor: not-allowed; }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 640px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .filter-group label {
+      font-size: 0.72rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-group select {
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid #2a2a2a;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      font-size: 0.88rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-group select:focus { border-color: #555; }
+
+    /* Intent box */
+    .intent-box {
+      width: 100%;
+      max-width: 640px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 0.88rem;
+      color: #aaa;
+      margin-bottom: 28px;
+      display: none;
+    }
+
+    .intent-box span { color: #f0f0f0; }
+
+    /* Results */
+    .results {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover { border-color: #444; }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .card-title { font-size: 1.05rem; font-weight: 600; }
+
+    .card-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: #2a2a2a;
+      color: #aaa;
+      white-space: nowrap;
+    }
+
+    .imdb { font-size: 0.78rem; font-weight: 600; color: #f5c518; }
+
+    .genres { font-size: 0.78rem; color: #666; margin-bottom: 10px; }
+
+    .description {
+      font-size: 0.85rem;
+      color: #999;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .match-reason {
+      font-size: 0.82rem;
+      color: #bbb;
+      background: #111;
+      border-left: 3px solid #e50914;
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      line-height: 1.5;
+    }
+
+    .score-bar-wrap {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score-bar-bg {
+      flex: 1;
+      height: 4px;
+      background: #2a2a2a;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      background: #e50914;
+      border-radius: 2px;
+      transition: width 0.6s ease;
+    }
+
+    .score-label { font-size: 0.72rem; color: #555; white-space: nowrap; }
+
+    .loading { color: #555; font-size: 0.9rem; margin-top: 20px; display: none; }
+  </style>
+</head>
+<body>
+
+  <h1>Cue<span>Flix</span></h1>
+  <p class="subtitle">Describe what you're in the mood for — we'll find the match.</p>
+
+  <div class="search-row">
+    <input
+      id="queryInput"
+      type="text"
+      placeholder="e.g. something funny for a Sunday evening with my girlfriend"
+    />
+    <button id="submitBtn" onclick="search()">Search</button>
+  </div>
+
+  <div class="filters">
+    <div class="filter-group">
+      <label>Type</label>
+      <select id="filterType">
+        <option value="Both">Movies & Shows</option>
+        <option value="Movie">Movies only</option>
+        <option value="TV Show">TV Shows only</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Min IMDB Rating</label>
+      <select id="filterImdb">
+        <option value="0">Any rating</option>
+        <option value="7">7+ rated</option>
+        <option value="8">8+ rated</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Results</label>
+      <select id="filterTopK">
+        <option value="5">5 results</option>
+        <option value="10">10 results</option>
+        <option value="15">15 results</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="intent-box" id="intentBox">
+    🧠 <span id="intentText"></span>
+  </div>
+
+  <p class="loading" id="loading">Finding matches...</p>
+
+  <div class="results" id="results"></div>
+
+  <script>
+    document.getElementById("queryInput").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") search();
+    });
+
+    async function search() {
+      const query = document.getElementById("queryInput").value.trim();
+      if (!query) return;
+
+      const contentType = document.getElementById("filterType").value;
+      const minImdb = parseFloat(document.getElementById("filterImdb").value);
+      const topK = parseInt(document.getElementById("filterTopK").value);
+
+      const btn = document.getElementById("submitBtn");
+      const loading = document.getElementById("loading");
+      const resultsDiv = document.getElementById("results");
+      const intentBox = document.getElementById("intentBox");
+      const intentText = document.getElementById("intentText");
+
+      btn.disabled = true;
+      btn.textContent = "Searching...";
+      loading.style.display = "block";
+      resultsDiv.innerHTML = "";
+      intentBox.style.display = "none";
+
+      try {
+        const res = await fetch("/recommend", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query, content_type: contentType, min_imdb: minImdb, top_k: topK })
+        });
+
+        const data = await res.json();
+
+        if (data.query_explanation) {
+          intentText.textContent = data.query_explanation;
+          intentBox.style.display = "block";
+        }
+
+        data.results.forEach(r => {
+          const scorePercent = Math.round(r.score * 200);
+          const imdbHtml = r.imdb_score ? `<span class="imdb">⭐ ${r.imdb_score}</span>` : "";
+
+          resultsDiv.innerHTML += `
+            <div class="card">
+              <div class="card-top">
+                <div class="card-title">${r.title}</div>
+                <div class="card-meta">
+                  ${imdbHtml}
+                  <span class="badge">${r.type}</span>
+                  <span class="badge">${r.release_year}</span>
+                </div>
+              </div>
+              <div class="genres">${r.genres}</div>
+              <div class="description">${r.description}</div>
+              <div class="match-reason">${r.match_reason}</div>
+              <div class="score-bar-wrap">
+                <div class="score-bar-bg">
+                  <div class="score-bar-fill" style="width: ${scorePercent}%"></div>
+                </div>
+                <span class="score-label">match score ${r.score}</span>
+              </div>
+            </div>
+          `;
+        });
+
+      } catch (err) {
+        resultsDiv.innerHTML = `<p style="color:#e50914">Something went wrong. Try again.</p>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Search";
+        loading.style.display = "none";
+      }
+    }
+  </script>
+
+</body>
+</html>

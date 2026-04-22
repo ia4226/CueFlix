@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.pyo
+data/index.pkl
+data/enriched_data.csv
+.env
